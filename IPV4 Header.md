@@ -4,7 +4,7 @@
 1. **Version (4 bits)**: Indicates the IP version. For IPv4, this is `0100`; for IPv6, it’s `0110`.
 
 2. **IHL (Internet Header Length) (4 bits)**: Specifies the length of the IPv4 header in 4-byte increments. 
-   - Minimum value: 5 (20 bytes)
+   - Minimum value: 5 (20 bytes) we will be tking this in consideration yes baby i will get a good mark in networkin gin shalah
    - Maximum value: 15 (60 bytes)
    - If IHL = 5, the options field is empty.
 
