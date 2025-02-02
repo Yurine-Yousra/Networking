@@ -26,6 +26,7 @@ By default, RIP-enabled routers share their routing tables once every 30 seconds
 
 ## RIP v1 (Classful Networks)
 
+- This version broadcast messages.
 - Networks are classful, which means a network with an address of `10.0.12.0 /30` will be considered as `10.0.0.0 /8` because this address belongs to the Class A range.
 - A network with an address of `172.16.1.0 /28` will be considered as `172.16.0.0 /16` because this address belongs to the Class B range.
 - A network with an address of `192.168.3.0 /29` will be considered as `192.168.3.0 /24` because this address belongs to the range of Class C. This is what is classful.
@@ -36,6 +37,7 @@ By default, RIP-enabled routers share their routing tables once every 30 seconds
 ## RIP v2 (Classless Networks)
 
 - RIP v2, however, uses the CIDR and VLSM technologies, so the network will be taken with its real subnet mask.
+- This version multicast messages to the multicast address 224.0.0.9.
 
 ---
 
