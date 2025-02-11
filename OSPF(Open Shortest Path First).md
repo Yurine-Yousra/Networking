@@ -364,7 +364,6 @@ For instance:
 - Since R2 now has the highest OSPF priority, it will become the BDR.
 
 
-Here’s the text with proper headings added for clarity:
 
 ---
 
