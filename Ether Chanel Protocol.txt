@@ -1,0 +1,89 @@
+Ether Chanel Protocol Port Channel LAG(Link Aggregation Group)
+this is a layer 2 protocol
+difference between Access switch & Distribution switch 
+1- Access switch : a switch that end hosts like PCs and Servers connect to
+2- Distribution switch : a switch that access switches connect to 
+What is a oversubscription
+when the bandwidth of the interfaces connected to end hosts is greater than the bandwidth of the connection to a distribution switch(es) , some oversubscription is acceptable but too much will cause congestion
+in the first figure we notice that there are a lot of end hosts connected to ASW1 and there is a single connection between ASW1 & DSW2.
+the connection to DSW1 is congested it should add another link to increase the bandwidth so it can support all of the end hosts
+even if the admin will add connections between ASW1 & DSW1 the problem will not be resolved and there will still be a congestion ; this is due to STP(Spanning Tree Protocol) 
+that will block redundant ports and enable only one port so even if ASW1 & DSW1 are connected through multiple ports only one will be enabled and others are disabled . Here where we need ETHERCHANNEL .
+EtherChannel is a layer 2 protocol that groups multiple interfaces together to act as a single interface and STP will treat this group as a single interface.
+
+Note : TRaffic using the EtherChannel will be load balanced among the physical interfaces in the group . AN algorithm is used to determine which traffic will use which physical interface .
+
+EtherChannel Load Balancing
+EtherCHannel load balances based on "flows"
+A flow is a communication between two nodes in the network.
+frames in the same flow will be forwarded using the same physical interface
+if frames in the same flow were forwarded using different physical interfaces some frames may arrive at the destination out of order which can cause problems . Some application can deal with frames that don't arrive in the appropriate order however other application can not.
+In figure 2 let's assume that PC1 want to communicate with PR1 a calculation will be done to determine which physical interface among the ehterchannel groupe will be selcted to handle the traffic between these two nodes.
+this calculation used different inputs that you can change and modify , the inputs are as the following :
+-Source Mac
+-Destination Mac
+-Source/Destination Mac
+-Source IP
+-Destination IP
+-Source/Destination IP
+
+Load-Balancing COnfiguration
+to see the current inputs used to do the selection calculation use the caomande 
+ASW1#show etherchannel load-balance
+
+to change the method of load balancing use the following command 
+ASW1(config)#port-channel load-balance <method of load balancing>
+
+to show the available load-balancing methods on a device use the follwoing command 
+ASW1(config)#port-channel load-balance ?
+
+EhterChannel Configurtion
+There are three methods of EtherChannel configuration 
+PAgP(Port Agregation Protocol)
+cisco proprietary protocol
+dynamically negotiates the creation/mainetanance of the etherchannel 
+
+LACP (Link Aggregation Protocol)
+Industry stadard protcol (IEEE 802.3ad)
+dynamically negotiates the creation/mainetanance of the etherchannel 
+Static Etherchannel
+a protcol is not use to determine if an etherchannel should be formed
+interfaces are statically configured to form ehterchannel
+
+up to 8 interfaces can be formed into a single etherchannel (LACP allows up to 16 but only 8 will be active the other 8 will be i standby mode waiting for an active interface to fail)
+
+PAgP Configuration
+ASW1(config)#interface range g0/0 -3
+ASW1(config-if-range)#channel-group 1 mode ? <use one of the follwing options>  
+active 
+auto
+desirable
+on 
+passive 
+Note :  the channel groupe number has to match in the same switch but it does not have to much the channel group channel number on the other siwtch
+
+if you use auto / desirable the protocol used will be automatically PAgP
+if you use active /passive the protocol  use will be automatically LACP
+if you use on then you are using the Static configuration protocol
+
+the auto and desirable are for PAgP and active and passive are used for LACP
+auto will not acitvally tryto form an etherchannel 
+desirble will activaly try to form an etherchannel
+passive will not activaly try to form an ehterchannel
+active will activaly try to form an ehterchannel
+
+auto +  auto  = no ehterchannel
+desirable + desirable  = ehterchannel
+auto + desirbale  = etherchannel
+active + active = ehterchannel
+passive + passive  = no etherchannel
+active + passsive  = ehterchannel
+Note : on mode works only with on mode 
+
+to determine which protocol you want to use to configure etherchannel use the follwoing command
+ASW1(config)#interface range g0/0 -3
+ASW1(config-if-range)#channel-protocol ? [lacp / pAgp]
+
+after ehterchannel configuration you can configure the portchannel ; the portchannel will be listed with the rest of siwtch interfaces (it is listed the last one generally)
+in the figure number 3 : the port channel is configured as a trunk switchport :
+<---INsert the figure--->
